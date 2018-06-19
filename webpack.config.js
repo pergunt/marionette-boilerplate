@@ -12,6 +12,7 @@ module.exports = {
     alias: {
       Templates: SRC_DIR +  '/js/templates',
       Views: SRC_DIR + '/js/views',
+      Models: SRC_DIR + '/js/models',
       Entities: SRC_DIR + '/js/entities',
       Behaviors: SRC_DIR + '/js/behaviors',
       Fixtures: TEST_DIR + '/fixtures',

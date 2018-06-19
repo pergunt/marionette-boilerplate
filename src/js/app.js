@@ -1,14 +1,16 @@
 import './../scss/app.scss';
 import 'bootstrap';
 import Mn from 'backbone.marionette';
-import Sample from 'Views/sample';
+//import Sample from 'Views/sample';
+import Root from 'Views/root'
 
 var App =  Mn.Application.extend({
   region: '#app',
-
+  beforeStart() {
+	  Backbone.history.start();
+  },
   onStart() {
-    this.showView(new Sample());
-    Backbone.history.start();
+    this.showView(new Root());
   }
 });
 
