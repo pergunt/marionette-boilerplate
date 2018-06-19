@@ -1,5 +1,4 @@
 import Mn from 'backbone.marionette';
-import JokeModel from 'Models/joke'
 
 
 const Joke  = Mn.View.extend({
@@ -32,19 +31,15 @@ const NorrisWidget = Mn.View.extend({
 		'sync': 'renderJoke'
 	},
 	initialize() {
-		this.model = new JokeModel();
+		this.model.fetch();
 	},
 	fetchJoke() {
 		this.getUI('btn').attr('disabled', true).text('Loading');
-		this.model.unset('id')
 		this.model.fetch();
 	},
 	renderJoke(model, response) {
 		this.getUI('btn').attr('disabled', false).text('New Joke');
-		this.showChildView('jokeRegion', new Joke({model}))
-	},
-	onRender() {
-		this.model.fetch();
+		this.showChildView('jokeRegion', new Joke({model}) )
 	}
 });
 export default NorrisWidget

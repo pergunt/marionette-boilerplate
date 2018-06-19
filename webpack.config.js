@@ -1,20 +1,19 @@
 const path = require('path');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 var DIST_DIR = path.resolve(__dirname, "dist");
 var SRC_DIR = path.resolve(__dirname, "src");
 var TEST_DIR = path.resolve(__dirname, "test");
 
-module.exports = {
+const common = {
   entry: SRC_DIR + '/js/app.js',
   resolve: {
     alias: {
       Templates: SRC_DIR +  '/js/templates',
       Views: SRC_DIR + '/js/views',
       Models: SRC_DIR + '/js/models',
-      Entities: SRC_DIR + '/js/entities',
-      Behaviors: SRC_DIR + '/js/behaviors',
       Fixtures: TEST_DIR + '/fixtures',
       Img: SRC_DIR + '/img'
     },
@@ -22,7 +21,7 @@ module.exports = {
   },
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist')
+    path: DIST_DIR
   },
   module: {
     rules: [{
@@ -39,6 +38,11 @@ module.exports = {
       }
     },
     {
+	    test: /\.js$/,
+	    exclude: /node_modules/,
+	    use: 'babel-loader',
+    },
+    {
       test: /\.(eot|svg|ttf|woff|woff2)$/,
       loader: 'file-loader?name=fonts/[name].[ext]'
     },
@@ -48,12 +52,50 @@ module.exports = {
     }]
   },
   plugins: [
-    new ExtractTextPlugin('app.css'),
-    new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery', 'window.jQuery': 'jquery',
-      Popper: ['popper.js', 'default'],
-      _: 'underscore'
-    })
+	  new HtmlWebpackPlugin({
+		  template: path.join(__dirname, 'src/index.html'),
+		  filename: 'index.html',
+		  path: DIST_DIR
+	  }),
+	new ExtractTextPlugin('app.css'),
+	new webpack.ProvidePlugin({
+	  $: 'jquery',
+	  jQuery: 'jquery', 'window.jQuery': 'jquery',
+	  _: 'underscore'
+	})
   ]
 };
+
+const prod = {
+	plugins: [
+		...common.plugins,
+		new webpack.DefinePlugin({
+			'process.env.NODE_ENV': JSON.stringify('production')
+		}),
+		new webpack.optimize.UglifyJsPlugin({
+			uglifyOptions: {
+				warnings: false,
+				output: {
+					comments: false,
+					beautify: false
+				}
+			}
+		})
+	]
+};
+const devServer = {
+	devServer: {
+		port: 8000,
+		historyApiFallback: true,
+		inline: true,
+	}
+};
+module.exports = function(env) {
+	if (env ==='development') {
+		return {...common, ...devServer}
+	}
+	if (env ==='production') {
+		return {...common, ...prod}
+	}
+}
+

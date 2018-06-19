@@ -1,7 +1,7 @@
 import './../scss/app.scss';
 import 'bootstrap';
 import Mn from 'backbone.marionette';
-//import Sample from 'Views/sample';
+import JokeModel from 'Models/joke'
 import Root from 'Views/root'
 
 var App =  Mn.Application.extend({
@@ -10,7 +10,7 @@ var App =  Mn.Application.extend({
 	  Backbone.history.start();
   },
   onStart() {
-    this.showView(new Root());
+    this.showView(new Root( {model: new JokeModel()} ));
   }
 });
 
